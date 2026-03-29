@@ -66,15 +66,14 @@
     </div>
 
     <button class="pomo-btn" onclick="openPomo()">OPEN POMODORO WINDOW</button>
-    <div class="footer">NOVA SPHERE DASHBOARD-JITUMONI BARUAH💖</div>
+    <div class="footer">NOVA SPHERE DASHBOARD</div>
 
     <script>
         let userName = localStorage.getItem('nova_user') || "";
 
-        // Collect Name on First Launch
         window.onload = () => {
             if(!userName) {
-                userName = prompt("Enter your name for Nova Sphere:", "Jitumoni");
+                userName = prompt("Enter your name:", "Jitumoni");
                 localStorage.setItem('nova_user', userName);
             }
             document.getElementById('userNameInput').value = userName;
@@ -85,9 +84,9 @@
             userName = document.getElementById('userNameInput').value;
             localStorage.setItem('nova_user', userName);
             alert("Name updated!");
+            updateQuote();
         }
 
-        // Local Image Upload Logic
         document.getElementById('bgUpload').onchange = (e) => {
             const file = e.target.files[0];
             if(file) {
@@ -99,7 +98,6 @@
             }
         };
 
-        // Personalized Quotes
         const baseQuotes = ["Keep pushing", "Success is near", "Stay focused", "Make it happen", "Build the future"];
         function updateQuote() {
             const q = baseQuotes[Math.floor(Math.random() * baseQuotes.length)];
@@ -107,10 +105,16 @@
         }
         setInterval(updateQuote, 5000);
 
-        // Clock
+        // --- FIXED 12-HOUR CLOCK ---
         function tick() {
             const n = new Date();
-            document.getElementById('h').innerText = String(n.getHours()).padStart(2, '0');
+            let h = n.getHours();
+            
+            // Convert to 12h format
+            h = h % 12;
+            h = h ? h : 12; 
+
+            document.getElementById('h').innerText = String(h).padStart(2, '0');
             document.getElementById('m').innerText = String(n.getMinutes()).padStart(2, '0');
             document.getElementById('s').innerText = String(n.getSeconds()).padStart(2, '0');
             const opt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -118,31 +122,9 @@
         }
         setInterval(tick, 1000); tick();
 
-        // Pomodoro Window
         function openPomo() {
-            const pomoWin = window.open("", "Pomodoro", "width=400,height=500");
-            pomoWin.document.write(`
-                <html><head><title>Pomo Window</title><style>
-                body { background: #111; color: #ffd700; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin:0; }
-                h1 { font-size: 80px; margin: 0; }
-                p { font-size: 14px; opacity: 0.7; }
-                button { margin-top: 20px; padding: 10px 20px; background: #ffd700; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; }
-                </style></head><body>
-                <p>POMODORO SESSION</p>
-                <h1 id="timer">25:00</h1>
-                <button onclick="start()">START</button>
-                <script>
-                    let t = 1500;
-                    function start() {
-                        setInterval(() => {
-                            if(t > 0) { t--; 
-                            let m = Math.floor(t/60); let s = t%60;
-                            document.getElementById('timer').innerText = m.toString().padStart(2,'0') + ":" + s.toString().padStart(2,'0');
-                            }
-                        }, 1000);
-                    }
-                <\/script></body></html>
-            `);
+            const win = window.open("", "Pomo", "width=400,height=500");
+            win.document.write(`<html><body style="background:#111;color:#ffd700;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;"><h1>25:00</h1><button onclick="start()">START</button><script>let t=1500;function start(){setInterval(()=>{if(t>0){t--;let m=Math.floor(t/60),s=t%60;document.querySelector('h1').innerText=m+":"+(s<10?'0'+s:s)}},1000)}<\/script></body></html>`);
         }
 
         document.getElementById('fontPicker').onchange = (e) => {
