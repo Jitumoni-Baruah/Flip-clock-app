@@ -1,76 +1,80 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Sphere | Pro Customizable</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700&family=Inter:wght@400;900&family=Audiowide&family=Rajdhani:wght@600&family=JetBrains+Mono&family=Michroma&family=Space+Mono&family=Syncopate:wght@700&family=Teko:wght@500&display=swap" rel="stylesheet">
+    <title>Nova Sphere | Original 3D Restored</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700&family=Inter:wght@400;900&family=Audiowide&family=Rajdhani:wght@600&family=JetBrains+Mono&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --bg-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071');
             --accent: #ffd700;
             --font-clock: 'Bebas Neue', sans-serif;
-            --glass: rgba(0, 0, 0, 0.85);
             --card-w: 200px;
             --card-h: 260px;
-            --clock-f-size: 180px;
+            --font-size: 180px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), var(--bg-image) no-repeat center center/cover;
-            color: white; font-family: 'Inter', sans-serif; overflow: hidden; transition: background 0.5s ease;
+            color: white; font-family: 'Inter', sans-serif; overflow: hidden;
         }
 
-        #quote-box { position: absolute; top: 40px; text-align: center; width: 80%; font-size: 1.2rem; color: var(--accent); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); letter-spacing: 2px; }
-        .date-display { font-size: 1.4rem; letter-spacing: 8px; margin-bottom: 30px; opacity: 0.8; text-transform: uppercase; }
-        
-        .clock { display: flex; gap: 20px; align-items: center; }
-        .card { 
-            width: var(--card-w); height: var(--card-h); 
-            background: var(--glass); border-radius: 20px; 
-            display: flex; justify-content: center; align-items: center; 
-            font-family: var(--font-clock); font-size: var(--clock-f-size); 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); 
-            position: relative; transition: all 0.2s ease;
+        #quote-box { position: absolute; top: 40px; text-align: center; width: 80%; font-size: 1.2rem; color: var(--accent); letter-spacing: 2px; }
+
+        /* --- RESTORED 3D FLIP ENGINE --- */
+        .clock { display: flex; gap: 20px; perspective: 1000px; }
+        .flip-card {
+            position: relative; width: var(--card-w); height: var(--card-h);
+            font-family: var(--font-clock); font-size: var(--font-size);
+            line-height: var(--card-h); text-align: center; border-radius: 12px;
         }
-        .card::after { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); }
 
-        .pomo-btn { margin-top: 40px; padding: 12px 35px; background: transparent; border: 1px solid var(--accent); color: var(--accent); cursor: pointer; font-family: 'Orbitron'; border-radius: 50px; transition: 0.3s; }
-        .pomo-btn:hover { background: var(--accent); color: black; }
+        .digital {
+            position: absolute; left: 0; width: 100%; height: 50%;
+            overflow: hidden; background: #1a1d21;
+            backface-visibility: hidden; -webkit-backface-visibility: hidden;
+        }
 
-        /* Sidebar Settings */
+        .top { top: 0; border-radius: 12px 12px 0 0; z-index: 1; border-bottom: 1px solid rgba(0,0,0,0.5); }
+        .bottom { bottom: 0; border-radius: 0 0 12px 12px; line-height: 0; z-index: 0; background: #111; }
+
+        .flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+            background: #1a1d21; transform-origin: bottom; z-index: 5;
+            transform-style: preserve-3d; border-radius: 12px 12px 0 0;
+            transition: transform 0.5s ease-in;
+        }
+        .flap .back { transform: rotateX(-180deg); line-height: 0; background: #111; border-radius: 0 0 12px 12px; }
+
+        .flipping .flap { transform: rotateX(-180deg); }
+
+        /* Sidebar & Controls */
         .sidebar { position: absolute; left: -320px; top: 0; width: 320px; height: 100%; background: rgba(0,0,0,0.95); padding: 40px 25px; transition: 0.4s; z-index: 100; border-right: 1px solid var(--accent); overflow-y: auto; }
         .sidebar.active { left: 0; }
-        .toggle { position: absolute; right: -55px; top: 30px; background: #000; width: 55px; height: 55px; cursor: pointer; display: flex; justify-content: center; align-items: center; border-radius: 0 12px 12px 0; color: var(--accent); font-size: 24px; border: 1px solid var(--accent); border-left: none; }
+        .toggle { position: absolute; right: -55px; top: 30px; background: #000; width: 55px; height: 55px; cursor: pointer; display: flex; justify-content: center; align-items: center; border-radius: 0 12px 12px 0; color: var(--accent); border: 1px solid var(--accent); border-left: none; }
         
-        label { font-size: 10px; color: var(--accent); display: block; margin-bottom: 5px; letter-spacing: 1px; }
-        input[type="range"], input[type="text"], input[type="file"], select { width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #333; margin-bottom: 20px; border-radius: 5px; }
-        
-        .footer { position: absolute; bottom: 20px; font-family: 'Orbitron'; font-size: 10px; opacity: 0.4; }
+        label { font-size: 10px; color: var(--accent); display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #333; margin-bottom: 20px; border-radius: 5px; }
+
+        .pomo-btn { margin-top: 40px; padding: 12px 35px; background: transparent; border: 1px solid var(--accent); color: var(--accent); cursor: pointer; font-family: 'Orbitron'; border-radius: 50px; }
     </style>
 </head>
 <body>
 
-    <div id="quote-box">Nova Sphere Terminal</div>
+    <div id="quote-box">Nova Sphere Restored</div>
 
     <div class="sidebar" id="sidebar">
         <div class="toggle" onclick="document.getElementById('sidebar').classList.toggle('active')">⚙️</div>
         
         <label>TIME FORMAT</label>
-        <select id="timeFormat">
-            <option value="24">24 HOUR FORMAT</option>
-            <option value="12">12 HOUR FORMAT</option>
-        </select>
+        <select id="timeFormat"><option value="24">24 HOUR</option><option value="12">12 HOUR</option></select>
 
-        <label>FONT SIZE (<span id="fSizeVal">180</span>px)</label>
-        <input type="range" id="fSizeSlider" min="50" max="300" value="180">
-
-        <label>CARD WIDTH (<span id="cWidthVal">200</span>px)</label>
-        <input type="range" id="cWidthSlider" min="100" max="400" value="200">
+        <label>CLOCK SCALE (Font Size)</label>
+        <input type="range" id="sizeSlider" min="100" max="300" value="180">
 
         <label>CHOOSE FONT</label>
         <select id="fontPicker">
@@ -78,59 +82,45 @@
             <option value="'Orbitron'">Orbitron</option>
             <option value="'Audiowide'">Audiowide</option>
             <option value="'Rajdhani'">Rajdhani</option>
-            <option value="'JetBrains Mono'">JetBrains Mono</option>
-            <option value="'Teko'">Teko</option>
-            <option value="'Inter'">Inter Black</option>
         </select>
 
         <label>UPLOAD BACKGROUND</label>
         <input type="file" id="bgUpload" accept="image/*">
         
         <label>USER NAME</label>
-        <input type="text" id="userNameInput" placeholder="Enter name...">
-        <button onclick="updateName()" style="width:100%; padding:10px; background:var(--accent); border:none; color:black; font-weight:bold; cursor:pointer; border-radius:5px;">SAVE PREFERENCES</button>
+        <input type="text" id="userNameInput">
+        <button onclick="save()" style="width:100%; padding:10px; background:var(--accent); border:none; color:black; font-weight:bold; cursor:pointer;">SAVE SETTINGS</button>
     </div>
 
-    <div class="date-display" id="date">-- --- ----</div>
     <div class="clock">
-        <div class="card" id="h">00</div>
-        <div class="card" id="m">00</div>
-        <div class="card" id="s">00</div>
+        <div class="flip-card" id="hCard"><div class="digital top">00</div><div class="digital bottom">00</div><div class="flap"><div class="digital front">00</div><div class="digital back">00</div></div></div>
+        <div class="flip-card" id="mCard"><div class="digital top">00</div><div class="digital bottom">00</div><div class="flap"><div class="digital front">00</div><div class="digital back">00</div></div></div>
+        <div class="flip-card" id="sCard"><div class="digital top">00</div><div class="digital bottom">00</div><div class="flap"><div class="digital front">00</div><div class="digital back">00</div></div></div>
     </div>
 
-    <button class="pomo-btn" onclick="openPomo()">START POMODORO WINDOW</button>
-    <div class="footer">ENGINEERED BY JITUMONI BARUAH</div>
+    <button class="pomo-btn" onclick="openPomo()">OPEN POMODORO WINDOW</button>
 
     <script>
-        let userName = localStorage.getItem('nova_user') || "";
+        let userName = localStorage.getItem('nova_user') || "Jitumoni";
         const root = document.documentElement;
 
-        // Customization Listeners
-        document.getElementById('fSizeSlider').oninput = (e) => {
-            root.style.setProperty('--clock-f-size', e.target.value + 'px');
-            document.getElementById('fSizeVal').innerText = e.target.value;
-        };
-        document.getElementById('cWidthSlider').oninput = (e) => {
-            root.style.setProperty('--card-w', e.target.value + 'px');
-            root.style.setProperty('--card-h', (parseInt(e.target.value) * 1.3) + 'px');
-            document.getElementById('cWidthVal').innerText = e.target.value;
-        };
-        document.getElementById('fontPicker').onchange = (e) => root.style.setProperty('--font-clock', e.target.value);
-
-        window.onload = () => {
-            if(!userName) {
-                userName = prompt("Welcome! Please enter your name:", "Jitumoni");
-                localStorage.setItem('nova_user', userName || "Explorer");
-            }
-            document.getElementById('userNameInput').value = userName;
-            updateQuote();
+        // Scaling Logic
+        document.getElementById('sizeSlider').oninput = (e) => {
+            let val = e.target.value;
+            root.style.setProperty('--font-size', val + 'px');
+            root.style.setProperty('--card-w', (val * 1.1) + 'px');
+            root.style.setProperty('--card-h', (val * 1.4) + 'px');
         };
 
-        function updateName() {
-            userName = document.getElementById('userNameInput').value;
-            localStorage.setItem('nova_user', userName);
-            alert("Settings Saved!");
+        // Name & Quote Setup
+        window.onload = () => { document.getElementById('userNameInput').value = userName; updateQuote(); };
+        function save() { userName = document.getElementById('userNameInput').value; localStorage.setItem('nova_user', userName); alert("Saved!"); }
+
+        function updateQuote() {
+            const qs = ["Focus", "Grind", "Success"];
+            document.getElementById('quote-box').innerText = `${qs[Math.floor(Math.random()*qs.length)]}, ${userName}!`;
         }
+        setInterval(updateQuote, 5000);
 
         // Image Upload
         document.getElementById('bgUpload').onchange = (e) => {
@@ -142,61 +132,42 @@
             }
         };
 
-        // Quotes
-        const quotes = ["Make every second count", "Focus on the goal", "Stay hungry, stay foolish", "The future is yours", "Grind now, shine later"];
-        function updateQuote() {
-            const q = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById('quote-box').innerText = `${q}, ${userName}!`;
-        }
-        setInterval(updateQuote, 5000);
+        // Restored Flip Engine
+        function updateFlip(id, val) {
+            const card = document.getElementById(id);
+            const top = card.querySelector('.top'), bottom = card.querySelector('.bottom');
+            const front = card.querySelector('.front'), back = card.querySelector('.back');
 
-        // Clock Engine
+            if (top.innerText === val) return;
+            front.innerText = top.innerText;
+            back.innerText = val;
+            top.innerText = val;
+
+            card.classList.remove('flipping');
+            void card.offsetWidth;
+            card.classList.add('flipping');
+
+            setTimeout(() => { bottom.innerText = val; card.classList.remove('flipping'); }, 500);
+        }
+
         function tick() {
             const n = new Date();
             let h = n.getHours();
-            const format = document.getElementById('timeFormat').value;
-
-            if (format === '12') {
-                h = h % 12 || 12;
-            }
-
-            document.getElementById('h').innerText = String(h).padStart(2, '0');
-            document.getElementById('m').innerText = String(n.getMinutes()).padStart(2, '0');
-            document.getElementById('s').innerText = String(n.getSeconds()).padStart(2, '0');
-            
-            const opt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('date').innerText = n.toLocaleDateString('en-US', opt);
+            if(document.getElementById('timeFormat').value === '12') h = h % 12 || 12;
+            updateFlip('hCard', String(h).padStart(2,'0'));
+            updateFlip('mCard', String(n.getMinutes()).padStart(2,'0'));
+            updateFlip('sCard', String(n.getSeconds()).padStart(2,'0'));
         }
         setInterval(tick, 1000); tick();
 
-        // Separate Pomodoro Window
         function openPomo() {
-            const pw = window.open("", "Pomo", "width=350,height=450");
-            pw.document.write(`
-                <html><head><style>
-                    body { background: #0a0a0a; color: #ffd700; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin:0; }
-                    #t { font-size: 70px; margin: 10px 0; text-shadow: 0 0 20px rgba(255,215,0,0.4); }
-                    button { padding: 10px 25px; background: transparent; border: 1px solid #ffd700; color: #ffd700; cursor: pointer; border-radius: 5px; font-family: 'Orbitron'; }
-                    button:hover { background: #ffd700; color: black; }
-                </style></head><body>
-                    <div style="font-size:12px; letter-spacing:3px;">FOCUS SESSION</div>
-                    <h1 id="t">25:00</h1>
-                    <button onclick="s()">START TIMER</button>
-                    <script>
-                        let rem = 1500, iv = null;
-                        function s() {
-                            if(iv) return;
-                            iv = setInterval(() => {
-                                if(rem > 0) { rem--; 
-                                    let m = Math.floor(rem/60), s = rem%60;
-                                    document.getElementById('t').innerText = m.toString().padStart(2,'0') + ":" + s.toString().padStart(2,'0');
-                                } else { clearInterval(iv); alert("Session Complete!"); }
-                            }, 1000);
-                        }
-                    <\/script>
-                </body></html>
+            window.open("", "Pomo", "width=300,height=400").document.write(`
+                <body style="background:#000;color:#ffd700;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;">
+                <h1>25:00</h1><button onclick="setInterval(()=>{},1000)">START</button></body>
             `);
         }
+
+        document.getElementById('fontPicker').onchange = (e) => root.style.setProperty('--font-clock', e.target.value);
     </script>
 </body>
 </html>
